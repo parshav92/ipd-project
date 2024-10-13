@@ -1,0 +1,21 @@
+# Ignore Python cache files and directories
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment directories
+venv/
+env/
+
+# Ignore distribution info
+*.dist-info/
+
+# Ignore any local Click installation files
+click/
+
+# Ignore IDE/project-specific files (optional)
+.vscode/
+.idea/
+
+1kpasswords.txt
