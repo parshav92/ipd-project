@@ -67,7 +67,6 @@ def scan_contract(contract):
     # Define total width of the progress bar
         total_length = 30
     
-    # Show progress bar before the checks
         update_bar(total_length)
 
         print('''
