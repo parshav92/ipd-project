@@ -1,11 +1,13 @@
 import click
 import re
 import time
-import random
-import pyfiglet
-import os
 import sys
+from fpdf import FPDF
 from colorama import init, Fore, Style
+
+# Import vulnerability modules
+from modules import insec_randomsource
+from modules import re_entrancy
 from modules.floating_pragma import *
 from modules.utils.parse_contract_util import parse_contract
 from modules.selfdestruct import selfdestruct
@@ -16,10 +18,9 @@ from modules.stored_credentials import *
 from modules.insec_randomsource import * 
 from modules.tx_origin import * 
 from modules.assembly import * 
+from modules.utils.printer import printer_vuln
 from modules.delegate_call import *
-#from modules.block_timestamp import *
 from modules.ether_lock import *
-from modules.delegate_call import *
 from modules.utils.remove_comments import *
 from modules.integer_underflow_overflow import *
 from modules.rtlo import *
@@ -35,21 +36,31 @@ from modules.bad_assignment_operator import *
 from modules.depr_blockhash import *
 from modules.depr_msggas import *
 from modules.depr_now import *
-from modules.depr_now import *
 from modules.depr_sha3 import *
 from modules.depr_throw import *
 from modules.multidigits import *
 from modules.strict_equality import *
 
-
+# Initialize colorama
 init(autoreset=True)
 
-@click.group()
-def mycommands():
-    pass
+# PDF generation function
+def save_results_to_pdf(results, output_file="scan_results.pdf"):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
 
+    pdf.cell(200, 10, txt="Smart Contract Scan Results", ln=True, align='C')
+    pdf.ln(10)  # Add a line break
+
+    for line in results:
+        pdf.multi_cell(0, 10, txt=line)
+    
+    pdf.output(output_file)
+    print(f"Results saved to {output_file}")
+
+# Progress bar function
 def update_bar(total_length):
-    # Animated progress bar with color
     for i in range(total_length + 1):
         percent_complete = int((i / total_length) * 100)
         bar = f'{Fore.GREEN}#' * i + f'{Fore.RED}-' * (total_length - i)
@@ -59,179 +70,64 @@ def update_bar(total_length):
 
     print(Style.RESET_ALL + "\nScan complete!\n")
 
-@click.command('scan', help="scan contract")
+@click.group()
+def mycommands():
+    pass
+
+@click.command('scan', help="Scan a smart contract for vulnerabilities")
 @click.argument('contract', type=click.Path(exists=True), required=1)
-def scan_contract(contract):  
-        print_banner(contract)
+@click.option('--output-pdf', is_flag=True, help="Save the output as a PDF")
+def scan_contract(contract, output_pdf):
+    print_banner(contract)
+    total_length = 30
+    update_bar(total_length)
+
+    results = []
+    results.append("======================================")
+    results.append("              RESULTS")
+    results.append("======================================")
+
+    def log_result(check_name, func):
+        try:
+            func(contract)
+            results.append(f"{check_name}: PASSED")
+        except Exception as e:
+            results.append(f"{check_name}: FAILED - {str(e)}")
+
+    # Perform vulnerability checks
+    log_result("Arbitrary From", arbitraryfrom)
+    log_result("Assembly", assembly)
+    log_result("Assert Violation", assert_violation)
+    log_result("Bad Assignment Operator", bad_assignment_operator)
+    log_result("Block Timestamp", block_timestamp)
+    log_result("Delegate Call", delegate_call)
+    log_result("Dynamic Array Length", dynamic_array_length)
+    log_result("Floating Pragma", floating_pragma)
+    log_result("Function Default Visibility", function_default_visibility)
+    log_result("Hash Collision", hash_colission)
+    log_result("Insecure Random Source", insec_randomsource)
+    log_result("Integer Under/Overflow", integer_underflow_overflow)
+    log_result("Looped Calls", looped_calls)
+    log_result("Multiple Constructors", multiple_constructors)
+    log_result("Re-Entrancy", re_entrancy)
+    log_result("RTLO", rtlo)
+    log_result("Selfdestruct", selfdestruct)
+    log_result("Stored Credentials", stored_credentials)
+    log_result("Strict Equality", strict_equality)
+    log_result("Tx Origin", tx_origin)
+    log_result("Unchecked External Call", unchecked_external_call)
+    log_result("Wrong Constructor Name", wrong_constructor_name)
+    log_result("Deprecated Throw", throw)
+
+    for line in results:
+        print(line)
     
-    # Define total width of the progress bar
-        total_length = 30
-    
-        update_bar(total_length)
+    if output_pdf:
+        save_results_to_pdf(results)
 
-        print('''
-======================================
-              RESULTS
-======================================
-    ''')
-        try:
-            arbitraryfrom(contract)
-        except:
-            print("An error occured while checking arbitrary form. This vulnerability class was NOT checked.")
-
-        try:
-            assembly(contract)
-        except:
-            print("An error occured while checking assembly. This vulnerability class was NOT checked.")
-
-        try:
-            assert_violation(contract)
-        except:
-            print("An error occured while checking assert violation. This vulnerability class was NOT checked.")
-
-        try:
-            bad_assignment_operator(contract)
-        except:
-            print("An error occured while checking bad assignment operator. This vulnerability class was NOT checked.")
-
-        try:
-            block_timestamp(contract)
-        except:
-            print("An error occured while checking block timestamp. This vulnerability class was NOT checked.")
-
-        try:
-            delegate_call(contract)
-        except:
-            print("An error occured while checking delegate call. This vulnerability class was NOT checked.")
-
-        try:
-            blockhash(contract)
-        except:
-            print("An error occured while checking blockhash. This vulnerability class was NOT checked.")
-
-        try:
-            callcode(contract)
-        except:
-            print("An error occured while checking callcode. This vulnerability class was NOT checked.")
-
-        try:
-            msggas(contract)
-        except:
-            print("An error occured while checking msggas. This vulnerability class was NOT checked.")
-
-        try:
-            now(contract)
-        except:
-            print("An error occured while checking now. This vulnerability class was NOT checked.")
-
-        try:
-            sha3(contract)
-        except:
-            print("An error occured while checking sha3. This vulnerability class was NOT checked.")
-
-        try:
-            throw(contract)
-        except:
-            print("An error occured while checking throw. This vulnerability class was NOT checked.")
-
-        try:
-            dynamic_array_length(contract)
-        except:
-            print("An error occured while checking dynamic array length. This vulnerability class was NOT checked.")
-        
-        try:
-            ether_lock(contract)
-        except:
-            print("An error occured while checking integer ether lock. This vulnerability class was NOT checked.")
-
-        try:
-            floating_pragma(contract)
-        except:
-            print("An error occured while checking floating pragma. This vulnerability class was NOT checked.")
-
-        try:
-            function_default_visibility(contract)
-        except:
-            print("An error occured while checking function default visibility. This vulnerability class was NOT checked.")
-
-        try:
-            hash_colission(contract)
-        except:
-            print("An error occured while checking hash colission. This vulnerability class was NOT checked.")
-        
-        try:
-            insec_randomsource(contract)
-        except:
-            print("An error occured while checking insec randomsource. This vulnerability class was NOT checked.")
-
-        try:
-            integer_underflow_overflow(contract)
-        except:
-            print("An error occured while checking integer under/overflow. This vulnerability class was NOT checked.")
-
-        try:
-            looped_calls(contract)
-        except:
-            print("An error occured while checking looped calls. This vulnerability class was NOT checked.")
-
-        try:
-            multidigit(contract)
-        except:
-            print("An error occured while checking multidigit. This vulnerability class was NOT checked.")
-
-
-        try:
-            multiple_constructors(contract)
-        except:
-            print("An error occured while checking multiple constructors. This vulnerability class was NOT checked.")     
-        
-        try:
-            re_entrancy(contract)
-        except:
-            print("An error occured while checking reentrancy. This vulnerability class was NOT checked.")
-        
-
-        try:
-            rtlo(contract)
-        except:
-            print("An error occured while checking rtlo. This vulnerability class was NOT checked.")        
-        
-        try:
-            selfdestruct(contract)
-        except:
-            print("An error occured while checking selfdestruct. This vulnerability class was NOT checked.")       
-        
-        try:
-            stored_credentials(contract)
-        except:
-            print("An error occured while checking stored credentials. This vulnerability class was NOT checked.")
-
-        try:
-            strict_equality(contract)
-        except:
-            print("An error occured while checking strict equality This vulnerability class was NOT checked.")
-
-        try:
-            tx_origin(contract)
-        except:
-            print("An error occured while checking tx origin. This vulnerability class was NOT checked.")
-
-        try:
-            unchecked_external_call(contract)
-        except:
-            print("An error occured while checking unchecked external call. This vulnerability class was NOT checked.")
-
-        try:
-            wrong_constructor_name(contract)
-        except:
-            print("An error occured while checking wrong constructor name. This vulnerability class was NOT checked.")
-            
-        click.echo("Scan completed. See results above.")
-
-
+    click.echo("Scan completed. See results above.")
 
 mycommands.add_command(scan_contract)
 
 if __name__ == '__main__':
     mycommands()
-
