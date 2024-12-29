@@ -4,10 +4,12 @@ import time
 import sys
 from fpdf import FPDF
 from colorama import init, Fore, Style
-
-# Import vulnerability modules
 from modules import insec_randomsource
 from modules import re_entrancy
+from modules.utils.printer import printer_vuln
+# Import vulnerability modules
+from modules.re_entrancy import reentrancy
+from modules.insec_randomsource import randomsource
 from modules.floating_pragma import *
 from modules.utils.parse_contract_util import parse_contract
 from modules.selfdestruct import selfdestruct
@@ -18,7 +20,6 @@ from modules.stored_credentials import *
 from modules.insec_randomsource import * 
 from modules.tx_origin import * 
 from modules.assembly import * 
-from modules.utils.printer import printer_vuln
 from modules.delegate_call import *
 from modules.ether_lock import *
 from modules.utils.remove_comments import *
@@ -105,11 +106,11 @@ def scan_contract(contract, output_pdf):
     log_result("Floating Pragma", floating_pragma)
     log_result("Function Default Visibility", function_default_visibility)
     log_result("Hash Collision", hash_colission)
-    log_result("Insecure Random Source", insec_randomsource)
+    log_result("Insecure Random Source", randomsource)
     log_result("Integer Under/Overflow", integer_underflow_overflow)
     log_result("Looped Calls", looped_calls)
     log_result("Multiple Constructors", multiple_constructors)
-    log_result("Re-Entrancy", re_entrancy)
+    log_result("Re-Entrancy", reentrancy)
     log_result("RTLO", rtlo)
     log_result("Selfdestruct", selfdestruct)
     log_result("Stored Credentials", stored_credentials)
