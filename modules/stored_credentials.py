@@ -1,34 +1,49 @@
 import click
 import re
+import os
 from modules.utils.parse_contract_util import parse_contract
-import ntpath # solves problem off full path or test catalog issue
-from modules.utils.printer import *
+from modules.utils.printer import printer_vuln
 from vulnerabilities_descriptions.storedcreds_desc import *
 
-
 def stored_credentials(contract):
+    """
+    Detects possible storage of credentials in the smart contract.
+    """
+    # Check if the passwords file exists
+    password_file = "1kpasswords.txt"
+    if not os.path.exists(password_file):
+        print(f"Password file '{password_file}' not found. Skipping stored credentials check.")
+        return
+
     parsed_contract_into_list = parse_contract(contract)
-    y = open("1kpasswords.txt", 'r', encoding="utf-8")
-    passwords = y.readlines()
 
-    converted_passwds = []
-    for line in passwords:
-        converted_passwds.append(line.strip())
+    # Load and prepare password list
+    with open(password_file, 'r', encoding="utf-8") as f:
+        passwords = [line.strip() for line in f.readlines()]
+
+    # Ignore lines with `import` statements or comments
+    filtered_lines = [
+        line for line in parsed_contract_into_list
+        if not line.strip().startswith("import") and not line.strip().startswith("//")
+    ]
+
+    # Search for stored credentials
     newlist = []
-    for element in converted_passwds:
-        formula = r'^(.*?(\b' + element + r'\b)[^$]*)$'
-        r = re.compile(formula)
-        newlist += list(filter(r.match, parsed_contract_into_list))
-
-    newlist_to_print = []
-        #=====
+    for password in passwords:
+        formula = r'^(.*?(\b' + re.escape(password) + r'\b)[^$]*)$'
+        r = re.compile(formula, re.IGNORECASE)
+        newlist += list(filter(r.match, filtered_lines))
 
     if newlist:
-        for i in range(len(newlist)):
-            line_number = 1+parsed_contract_into_list.index(newlist[i]) #line number
-            line_number_as_str = str(line_number) #line number to string
-            newlist_to_print.append(line_number_as_str) #new list without []
-        newlist_noduplics = list(dict.fromkeys(newlist_to_print))
-        newlist_printable = ', '.join(newlist_noduplics) #new list without []
-            #Use printer
-        printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+        newlist_to_print = [
+            str(1 + parsed_contract_into_list.index(line)) for line in newlist
+        ]
+        newlist_noduplics = list(dict.fromkeys(newlist_to_print))  # Remove duplicates
+        newlist_printable = ', '.join(newlist_noduplics)
+        printer_vuln(
+            newlist_printable,
+            vulnerability_name,
+            vulnerability_description,
+            vulnerability_recommendation,
+            more_info
+        )

@@ -1,22 +1,35 @@
-import click
 import re
 from modules.utils.parse_contract_util import parse_contract
+from modules.utils.printer import printer_vuln
 from vulnerabilities_descriptions.arbitraryfrom_desc import *
 
-
 def arbitraryfrom(contract):
-    r = re.compile('^.*transferFrom\(.*\).*')
+    """
+    Detects insecure usage of the transferFrom function in a smart contract.
+    """
+    r = re.compile(r'^.*transferFrom\(.*\).*')  # Match any line with transferFrom
     parsed_contract_into_list = parse_contract(contract)
-    newlist = list(filter(r.match, parsed_contract_into_list))
+    newlist = list(filter(r.match, parsed_contract_into_list))  # Filter lines with transferFrom
+
+    if not newlist:
+        # Exit early if no transferFrom is found
+        return
+
     stripped = [s.strip() for s in newlist]
-    r2 = re.compile('^.*transferFrom\(msg\.sender.*\).*')
+
+    # Check for transferFrom using msg.sender
+    r2 = re.compile(r'^.*transferFrom\(msg\.sender.*\).*')
     newlist2 = list(filter(r2.match, stripped))
-    newlist_to_print = []
+
     if not newlist2:
-        for i in range(len(newlist)):
-            line_number = 1+parsed_contract_into_list.index(newlist[i]) #line number
-            line_number_as_str = str(line_number) #line number to string
-            newlist_to_print.append(line_number_as_str) #new list without []
-        newlist_printable = ', '.join(newlist_to_print) #new list without []
-        #Use printer
-        printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+        # If no secure usage is found, flag as a vulnerability
+        newlist_to_print = [
+            str(1 + parsed_contract_into_list.index(line)) for line in newlist
+        ]
+        printer_vuln(
+            ', '.join(newlist_to_print),
+            vulnerability_name,
+            vulnerability_description,
+            vulnerability_recommendation,
+            more_info
+        )
