@@ -20,3 +20,5 @@ def tx_origin(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)    
+    else:
+        return

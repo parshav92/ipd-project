@@ -38,3 +38,5 @@ def looped_calls(contract):
             vulnerability_recommendation,
             more_info
         )
+    else:
+        return

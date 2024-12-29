@@ -47,3 +47,5 @@ def stored_credentials(contract):
             vulnerability_recommendation,
             more_info
         )
+    else:
+        return

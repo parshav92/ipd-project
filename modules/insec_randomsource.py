@@ -23,3 +23,5 @@ def randomsource(contract):
             "Use Chainlink VRF or another cryptographically secure source of randomness.",
             ["https://docs.chain.link/docs/chainlink-vrf/"]
         )
+    else:
+        return

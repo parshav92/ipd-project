@@ -9,6 +9,7 @@ def assembly(contract):
     r = re.compile('^.*assembly.*')
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.match, parsed_contract_into_list))
+    
     #make newlist printable 
     newlist_to_print = []
     #=====
@@ -20,5 +21,6 @@ def assembly(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
-
+    else:
+        return
         

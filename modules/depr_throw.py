@@ -24,3 +24,5 @@ def throw(contract):
             "Replace 'throw' with 'revert' or 'require' to make the code compliant with modern Solidity.",
             ["https://solidity.readthedocs.io/en/v0.4.21/control-structures.html#error-handling-assert-require-revert-and-exceptions"]
         )
+    else:
+        return

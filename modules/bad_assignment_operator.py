@@ -5,7 +5,7 @@ from modules.utils.parse_contract_util import parse_contract
 from vulnerabilities_descriptions.bad_assignment_desc import *
 
 def bad_assignment_operator(contract):
-    r = re.compile('^.*(\=\+|\=\-|\=\\|\=\*).*')
+    r = re.compile(r'^.*(\=\+|\=\-|\=\\|\=\*).*')  # Add raw string prefix
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.findall, parsed_contract_into_list))
 
@@ -17,3 +17,5 @@ def bad_assignment_operator(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+    else:
+        return

@@ -6,7 +6,7 @@ from vulnerabilities_descriptions.multidigit_desc import *
 
 
 def block_timestamp(contract):
-    r = re.compile('^.*\d{7,}.*')
+    r = re.compile(r'^.*\d{7,}.*')  # Add raw string prefix
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.findall, parsed_contract_into_list))
 
@@ -18,3 +18,5 @@ def block_timestamp(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+    else:
+        return

@@ -7,14 +7,18 @@ def arbitraryfrom(contract):
     """
     Detects insecure usage of the transferFrom function in a smart contract.
     """
-    r = re.compile(r'^.*transferFrom\(.*\).*')  # Match any line with transferFrom
+    # Match any line with transferFrom
+    r = re.compile(r'^.*transferFrom\(.*\).*')
     parsed_contract_into_list = parse_contract(contract)
-    newlist = list(filter(r.match, parsed_contract_into_list))  # Filter lines with transferFrom
+
+    # Filter lines with transferFrom
+    newlist = list(filter(r.match, parsed_contract_into_list))
 
     if not newlist:
         # Exit early if no transferFrom is found
-        return
+        return  # Graceful exit with no vulnerabilities detected
 
+    # Strip whitespace for further processing
     stripped = [s.strip() for s in newlist]
 
     # Check for transferFrom using msg.sender
@@ -22,9 +26,8 @@ def arbitraryfrom(contract):
     newlist2 = list(filter(r2.match, stripped))
 
     if not newlist2:
-        # If no secure usage is found, flag as a vulnerability
         newlist_to_print = [
-            str(1 + parsed_contract_into_list.index(line)) for line in newlist
+        str(1 + parsed_contract_into_list.index(line)) for line in newlist
         ]
         printer_vuln(
             ', '.join(newlist_to_print),
@@ -33,3 +36,8 @@ def arbitraryfrom(contract):
             vulnerability_recommendation,
             more_info
         )
+        raise Exception("Vulnerability Detected")  # Raise exception for summary
+
+    else:
+        # Explicitly exit if all instances of transferFrom are securely implemented
+        return  # No vulnerability detected

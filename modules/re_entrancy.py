@@ -23,3 +23,5 @@ def reentrancy(contract):
             "Use a re-entrancy guard or ensure external calls are made at the end of the function.",
             ["https://consensys.github.io/smart-contract-best-practices/known_attacks/#reentrancy"]
         )
+    else:
+        return

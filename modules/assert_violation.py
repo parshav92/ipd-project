@@ -6,7 +6,7 @@ from vulnerabilities_descriptions.assertviol_desc import *
 
 
 def assert_violation(contract):
-    r = re.compile('^.*assert\(.*\).*') 
+    r = re.compile(r'^.*assert\(.*\).*')  # Add raw string prefix
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.match, parsed_contract_into_list))
     #make newlist printable 
@@ -20,5 +20,6 @@ def assert_violation(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
-
+    else:    
+        return
 

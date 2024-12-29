@@ -6,7 +6,7 @@ from vulnerabilities_descriptions.floating_pragma_desc import *
 
 
 def floating_pragma(contract):
-    r = re.compile('pragma solidity \^')
+    r = re.compile(r'pragma solidity \^')  # Add raw string prefix
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.match, parsed_contract_into_list))
 
@@ -21,3 +21,5 @@ def floating_pragma(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+    else:
+        return

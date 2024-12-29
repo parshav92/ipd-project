@@ -6,7 +6,7 @@ from vulnerabilities_descriptions.hashcol_desc import *
 
 
 def hash_colission(contract):
-    r = re.compile('^.*abi\.encodePacked\(.*,.*\).*') 
+    r = re.compile(r'^.*abi\.encodePacked\(.*,.*\).*')  # Add raw string prefix 
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.match, parsed_contract_into_list))
     #make newlist printable 
@@ -20,5 +20,6 @@ def hash_colission(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
-
+    else:
+        return
 

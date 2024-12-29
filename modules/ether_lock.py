@@ -12,7 +12,7 @@ def ether_lock(contract):
 
     newlist_to_print = []
     if newlist:
-        r2 = re.compile('\.transfer\(.*\)|\.call\(.*\)|\.send\(.*\)')
+        r2 = re.compile(r'\.transfer\(.*\)|\.call\(.*\)|\.send\(.*\)')  # Add raw string prefix
         withdrawal_functions = list(filter(r2.match, parsed_contract_into_list))
         if not withdrawal_functions:
             for i in range(len(newlist)):
@@ -22,4 +22,5 @@ def ether_lock(contract):
             newlist_printable = ', '.join(newlist_to_print) #new list without []
             printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
 
-        
+        else:
+            return

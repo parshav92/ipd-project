@@ -6,7 +6,7 @@ from vulnerabilities_descriptions.unchecked_external_call_desc import *
 
 
 def unchecked_external_call(contract):
-    r = re.compile('^.*\.send\(.*\).*')
+    r = re.compile(r'^.*\.send\(.*\).*')  # Add raw string prefix
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.match, parsed_contract_into_list))
 
@@ -20,3 +20,5 @@ def unchecked_external_call(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+    else:
+        return

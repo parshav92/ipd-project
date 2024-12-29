@@ -6,7 +6,7 @@ from vulnerabilities_descriptions.strictequal_desc import *
 
 
 def strict_equality(contract):
-    r = re.compile('^.*\.balance *== *\d*\.?\d*.*(ether|wei|gwei)')
+    r = re.compile(r'^.*\.balance *== *\d*\.?\d*.*(ether|wei|gwei)')  # Add raw string prefix
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.findall, parsed_contract_into_list))
 
@@ -18,3 +18,6 @@ def strict_equality(contract):
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+        
+    else:
+        return

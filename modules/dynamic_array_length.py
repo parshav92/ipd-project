@@ -6,7 +6,7 @@ from vulnerabilities_descriptions.dynamic_array_desc import *
 
 
 def dynamic_array_length(contract):
-    r = re.compile('.*uint\[\].*')
+    r = re.compile(r'.*uint\[\].*')  # Add raw string prefix
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.match, parsed_contract_into_list))
 
@@ -19,4 +19,6 @@ def dynamic_array_length(contract):
             newlist_to_print.append(line_number_as_str) #new list without []
         newlist_printable = ', '.join(newlist_to_print) #new list without []
         #Use printer
-        printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+        printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info) 
+    else:
+        return
