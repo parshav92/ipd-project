@@ -90,13 +90,16 @@ def scan_contract(contract, output_pdf):
 
     def log_result(check_name, func, contract, results):
         """
-        Logs the result of a vulnerability check to the results list.
+            Logs the result of a vulnerability check to the results list.
         """
         try:
             func(contract)  # Run the vulnerability function
-            results.append(f"{check_name}: PASSED")
+            results.append(f"{check_name}: PASSED")  # Mark as PASSED if no exceptions
         except Exception as e:
-            results.append(f"{check_name}: FAILED - {str(e)}")
+            if str(e) == "Vulnerability Detected":
+                results.append(f"{check_name}: FAILED - Vulnerability Detected")
+            else:
+                results.append(f"{check_name}: ERROR - {str(e)}")  # Log unexpected errors
 
     # Perform vulnerability checks
     log_result("Arbitrary From", arbitraryfrom, contract, results)
