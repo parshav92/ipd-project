@@ -41,24 +41,13 @@ from modules.depr_sha3 import *
 from modules.depr_throw import *
 from modules.multidigits import *
 from modules.strict_equality import *
-
+from utils.pdf_generation import save_results_to_pdf
+import os
+from pathlib import Path
+        
 # Initialize colorama
 init(autoreset=True)
 
-# PDF generation function
-def save_results_to_pdf(results, output_file="scan_results.pdf"):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-
-    pdf.cell(200, 10, txt="Smart Contract Scan Results", ln=True, align='C')
-    pdf.ln(10)  # Add a line break
-
-    for line in results:
-        pdf.multi_cell(0, 10, txt=line)
-    
-    pdf.output(output_file)
-    print(f"Results saved to {output_file}")
 
 # Progress bar function
 def update_bar(total_length):
@@ -130,7 +119,13 @@ def scan_contract(contract, output_pdf):
         print(line)
     
     if output_pdf:
-        save_results_to_pdf(results)
+        scan_dir = Path('scans')
+        scan_dir.mkdir(exist_ok=True)
+
+        contract_name = Path(contract).stem
+        pdf_filename = scan_dir / f"{contract_name}_scan_results.pdf"
+
+        save_results_to_pdf(results, pdf_filename)
 
     click.echo("Scan completed. See results above.")
 
