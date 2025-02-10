@@ -1,24 +1,20 @@
-import click
 import re
 from modules.utils.parse_contract_util import parse_contract
 from modules.utils.printer import *
 from vulnerabilities_descriptions.unchecked_external_call_desc import *
 
-
 def unchecked_external_call(contract):
-    r = re.compile(r'^.*\.send\(.*\).*')  # Add raw string prefix
+    r = re.compile(r'^.*\.send\(.*\).*')  # Detects `send()` usage
     parsed_contract_into_list = parse_contract(contract)
-    newlist = list(filter(r.match, parsed_contract_into_list))
+    detected_lines = [str(i+1) for i, line in enumerate(parsed_contract_into_list) if r.match(line)]
 
-    newlist_to_print = []
-    #=====
-    if newlist:
-        for i in range(len(newlist)):
-            line_number = 1+parsed_contract_into_list.index(newlist[i]) #line number
-            line_number_as_str = str(line_number) #line number to string
-            newlist_to_print.append(line_number_as_str) #new list without []
-        newlist_printable = ', '.join(newlist_to_print) #new list without []
-        #Use printer
+    if detected_lines:
+        newlist_printable = ', '.join(detected_lines)
+        
+        # Print to CLI using printer_vuln
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
-    else:
-        return
+        
+        # Return the result for logging
+        return f"Unchecked external call vulnerability found at line(s): {newlist_printable}"
+    
+    return None  # No vulnerabilities found

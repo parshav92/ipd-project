@@ -111,7 +111,7 @@ class SecurityReport(FPDF):
                 self.ln(5)
 
 
-def save_results_to_pdf(results, output_file="scan_results.pdf"):
+def save_results_to_pdf(results, output_file):
     pdf = SecurityReport()
     pdf.alias_nb_pages()
     pdf.add_page()
