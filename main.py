@@ -117,8 +117,8 @@ def scan_contract(contract, output_pdf):
     log_result("Wrong Constructor Name", wrong_constructor_name, contract, results)
     log_result("Deprecated Throw", throw, contract, results)
 
-    for line in results:
-        print(line)
+    # for line in results:
+    #     print(line)
     
     if output_pdf:
         scan_dir = Path('scans')
