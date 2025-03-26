@@ -6,17 +6,14 @@ from vulnerabilities_descriptions.dynamic_array_desc import *
 
 
 def dynamic_array_length(contract):
-    r = re.compile('.*uint\[\].*')
+    r = re.compile(r'.*uint\[\].*')
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.match, parsed_contract_into_list))
-
-    newlist_to_print = []
-    #=====
+    
     if newlist:
-        for i in range(len(newlist)):
-            line_number = 1+parsed_contract_into_list.index(newlist[i]) #line number
-            line_number_as_str = str(line_number) #line number to string
-            newlist_to_print.append(line_number_as_str) #new list without []
-        newlist_printable = ', '.join(newlist_to_print) #new list without []
-        #Use printer
+        newlist_to_print = [str(1 + parsed_contract_into_list.index(line)) for line in newlist]
+        newlist_printable = ', '.join(newlist_to_print)
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
+        return f"Dynamic Array Length vulnerability found at line(s): {newlist_printable}"
+    
+    return None 
