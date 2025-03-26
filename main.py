@@ -41,24 +41,13 @@ from modules.depr_sha3 import *
 from modules.depr_throw import *
 from modules.multidigits import *
 from modules.strict_equality import *
-
+from utils.pdf_generation import save_results_to_pdf
+import os
+from pathlib import Path
+        
 # Initialize colorama
 init(autoreset=True)
 
-# PDF generation function
-def save_results_to_pdf(results, output_file="scan_results.pdf"):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-
-    pdf.cell(200, 10, txt="Smart Contract Scan Results", ln=True, align='C')
-    pdf.ln(10)  # Add a line break
-
-    for line in results:
-        pdf.multi_cell(0, 10, txt=line)
-    
-    pdf.output(output_file)
-    print(f"Results saved to {output_file}")
 
 # Progress bar function
 def update_bar(total_length):
@@ -88,45 +77,60 @@ def scan_contract(contract, output_pdf):
     results.append("              RESULTS")
     results.append("======================================")
 
-    def log_result(check_name, func):
+    def log_result(check_name, func, contract, results):
+        """
+        Logs the result of a vulnerability check to the results list.
+        """
         try:
-            func(contract)
-            results.append(f"{check_name}: PASSED")
+            detected_vulns = func(contract)  # Run the vulnerability function
+            
+            if detected_vulns:  # If the function returns data, vulnerabilities exist
+                results.append(f"{check_name}: FAILED - {detected_vulns}")
+            else:
+                results.append(f"{check_name}: PASSED")  # No vulnerabilities detected
+
         except Exception as e:
-            results.append(f"{check_name}: FAILED - {str(e)}")
+            results.append(f"{check_name}: ERROR")
 
     # Perform vulnerability checks
-    log_result("Arbitrary From", arbitraryfrom)
-    log_result("Assembly", assembly)
-    log_result("Assert Violation", assert_violation)
-    log_result("Bad Assignment Operator", bad_assignment_operator)
-    log_result("Block Timestamp", block_timestamp)
-    log_result("Delegate Call", delegate_call)
-    log_result("Dynamic Array Length", dynamic_array_length)
-    log_result("Floating Pragma", floating_pragma)
-    log_result("Function Default Visibility", function_default_visibility)
-    log_result("Hash Collision", hash_colission)
-    log_result("Insecure Random Source", randomsource)
-    log_result("Integer Under/Overflow", integer_underflow_overflow)
-    log_result("Looped Calls", looped_calls)
-    log_result("Multiple Constructors", multiple_constructors)
-    log_result("Re-Entrancy", reentrancy)
-    log_result("RTLO", rtlo)
-    log_result("Selfdestruct", selfdestruct)
-    log_result("Stored Credentials", stored_credentials)
-    log_result("Strict Equality", strict_equality)
-    log_result("Tx Origin", tx_origin)
-    log_result("Unchecked External Call", unchecked_external_call)
-    log_result("Wrong Constructor Name", wrong_constructor_name)
-    log_result("Deprecated Throw", throw)
+    log_result("Arbitrary From", arbitraryfrom, contract, results)
+    log_result("Assembly", assembly, contract, results)
+    log_result("Assert Violation", assert_violation, contract, results)
+    log_result("Bad Assignment Operator", bad_assignment_operator, contract, results)
+    log_result("Block Timestamp", block_timestamp, contract, results)
+    log_result("Delegate Call", delegate_call, contract, results)
+    log_result("Dynamic Array Length", dynamic_array_length, contract, results)
+    log_result("Floating Pragma", floating_pragma, contract, results)
+    log_result("Function Default Visibility", function_default_visibility, contract, results)
+    log_result("Hash Collision", hash_colission, contract, results)
+    log_result("Insecure Random Source", randomsource, contract, results)
+    log_result("Integer Under/Overflow", integer_underflow_overflow, contract, results)
+    log_result("Looped Calls", looped_calls, contract, results)
+    log_result("Multiple Constructors", multiple_constructors, contract, results)
+    log_result("Re-Entrancy", reentrancy, contract, results)
+    log_result("RTLO", rtlo, contract, results)
+    log_result("Selfdestruct", selfdestruct, contract, results)
+    log_result("Stored Credentials", stored_credentials, contract, results)
+    log_result("Strict Equality", strict_equality, contract, results)
+    log_result("Tx Origin", tx_origin, contract, results)
+    log_result("Unchecked External Call", unchecked_external_call, contract, results)
+    log_result("Wrong Constructor Name", wrong_constructor_name, contract, results)
+    log_result("Deprecated Throw", throw, contract, results)
 
-    for line in results:
-        print(line)
+    # for line in results:
+    #     print(line)
     
     if output_pdf:
-        save_results_to_pdf(results)
+        scan_dir = Path('scans')
+        scan_dir.mkdir(exist_ok=True)
+
+        contract_name = Path(contract).stem
+        pdf_filename = scan_dir / f"{contract_name}_scan_results.pdf"
+
+        save_results_to_pdf(results, pdf_filename)
 
     click.echo("Scan completed. See results above.")
+
 
 mycommands.add_command(scan_contract)
 
