@@ -1,24 +1,31 @@
 from termcolor import colored, cprint
 
-
-
+from termcolor import colored
 
 def printer_vuln(line_num_arg, vuln_name_arg, vuln_description_arg, recommendation_arg, more_info_links):
-    #line_num = 1+parsed_contract_into_list.index(newlist[line_num_arg])
-    #line_num = 1
-    #line_number = colored(str(line_num_arg), "red", attrs=["bold"])
     line_number = colored(str(line_num_arg), "red", attrs=["bold"])
     vuln_name = colored(vuln_name_arg, "red", attrs=["bold"])
-    vuln_found = vuln_name + ' vulnerability found at line: ' + str(line_number)
-    vuln_description = colored("Description:", "green", attrs=["bold"]) + "\n" + colored("	" + vuln_description_arg, "grey", attrs=["bold"])
-    #vuln_more_info = colored("	More info:", "yellow", attrs=["concealed"]) + "\n" 
-    recommendation = colored("Recommendation:", "green", attrs=["bold"]) + "\n" + colored("	" + recommendation_arg, "cyan", attrs=['dark'])
+    vuln_found = vuln_name + ' vulnerability found at line(s): ' + str(line_number)
+    vuln_description = (
+        colored("Description:", "green", attrs=["bold"]) + "\n" + 
+        colored("    " + vuln_description_arg, "grey", attrs=["bold"])
+    )
+    recommendation = (
+        colored("Recommendation:", "green", attrs=["bold"]) + "\n" + 
+        colored("    " + recommendation_arg, "cyan", attrs=["dark"])
+    )
     more_info = colored("More info:", "yellow", attrs=["bold"])
+
+    # Combine all text for display
     text = vuln_found + "\n" + vuln_description + "\n" + recommendation + "\n" + more_info
     print(text)
+
+    # Print each additional link
     for link in more_info_links:
-        print("	* " + link)
+        print("    * " + link)
     print("\n")
+
+
 
 
 #example printable line:
