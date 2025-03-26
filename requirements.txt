@@ -2,3 +2,4 @@ click
 pyfiglet
 termcolor
 colorama
+fpdf
