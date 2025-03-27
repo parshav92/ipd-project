@@ -10,7 +10,7 @@ def reentrancy(contract):
     newlist = list(filter(r.match, parsed_contract_into_list))
 
     newlist_to_print = []
-
+    
     if newlist:
         for item in newlist:
             line_number = 1 + parsed_contract_into_list.index(item)

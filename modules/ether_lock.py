@@ -13,6 +13,7 @@ def ether_lock(contract):
 
     if newlist:
         r2 = re.compile(r'\.transfer\(.*\)|\.call\(.*\)|\.send\(.*\)')  # Detect withdrawal functions
+
         withdrawal_functions = list(filter(r2.match, parsed_contract_into_list))
 
         if not withdrawal_functions:

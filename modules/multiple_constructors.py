@@ -20,6 +20,7 @@ def multiple_constructors(contract):
     if not contract_name_match:
         return None  # No contract name found, gracefully exit
 
+
     contract_name = contract_name_match.group(1)
     old_constructor_pattern = re.compile(rf'function\s+{contract_name}\s*\(.*\)', re.IGNORECASE)
 

@@ -18,7 +18,6 @@ def randomsource(contract):
 
         newlist_printable = ', '.join(newlist_to_print)
 
-        # Use printer
         printer_vuln(
             newlist_printable,
             "Insecure Random Source",
@@ -26,7 +25,7 @@ def randomsource(contract):
             "Use Chainlink VRF or another cryptographically secure source of randomness.",
             ["https://docs.chain.link/docs/chainlink-vrf/"]
         )
-
+        
         return f"Insecure Random Source vulnerability found at line(s): {newlist_printable}"
     
     return None  # Explicitly return None if no vulnerabilities found

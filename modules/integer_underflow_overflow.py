@@ -32,7 +32,9 @@ def integer_underflow_overflow(contract):
         major_version = int(version.split('.')[1])  # Extract the second digit for comparison
 
         if major_version >= 8:
+
             return None  # Solidity 0.8.x and above handles underflow/overflow by default
+
         else:
             # Check for SafeMath usage in older Solidity versions
             r2 = re.compile(r'.*using SafeMath for.*')
