@@ -13,7 +13,8 @@ def stored_credentials(contract):
     password_file = "1kpasswords.txt"
     if not os.path.exists(password_file):
         print(f"Password file '{password_file}' not found. Skipping stored credentials check.")
-        return
+        
+        return None  # Explicitly return None
 
     parsed_contract_into_list = parse_contract(contract)
 
@@ -40,6 +41,7 @@ def stored_credentials(contract):
         ]
         newlist_noduplics = list(dict.fromkeys(newlist_to_print))  # Remove duplicates
         newlist_printable = ', '.join(newlist_noduplics)
+
         printer_vuln(
             newlist_printable,
             vulnerability_name,
@@ -47,5 +49,7 @@ def stored_credentials(contract):
             vulnerability_recommendation,
             more_info
         )
-    else:
-        return
+
+        return f"Stored Credentials vulnerability found at line(s): {newlist_printable}"
+    
+    return None  # Explicitly return None if no vulnerabilities found

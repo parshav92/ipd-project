@@ -14,25 +14,27 @@ def integer_underflow_overflow(contract):
 
     # Exit if the parsed contract is empty
     if not parsed_contract_into_list:
-        return  # Gracefully exit
+        return None  # Explicitly return None
 
     # Filter lines matching the regex for pragma solidity
     newlist = list(filter(r.match, parsed_contract_into_list))
 
     if not newlist:
-        return  # Exit if no pragma line is found
+        return None  # Exit if no pragma line is found
 
     try:
         # Extract version number
         match = re.findall(r"([0-9]+[.]+[0-9]+[.]+[0-9]+)", newlist[0])
         if not match:
-            return  # Exit if no version number is found
+            return None  # Exit if no version number is found
 
         version = match[0]  # Example: "0.8.15"
         major_version = int(version.split('.')[1])  # Extract the second digit for comparison
 
         if major_version >= 8:
-            return  # Solidity 0.8.x and above handles underflow/overflow by default
+
+            return None  # Solidity 0.8.x and above handles underflow/overflow by default
+
         else:
             # Check for SafeMath usage in older Solidity versions
             r2 = re.compile(r'.*using SafeMath for.*')
@@ -46,6 +48,9 @@ def integer_underflow_overflow(contract):
                     vulnerability_recommendation,
                     more_info
                 )
+
+                return "Integer Underflow/Overflow vulnerability detected in the contract."
+    
     except IndexError:
         # Handle unexpected index errors gracefully
-        return
+        return None  # Explicitly return None

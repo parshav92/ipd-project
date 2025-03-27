@@ -10,12 +10,15 @@ def reentrancy(contract):
     newlist = list(filter(r.match, parsed_contract_into_list))
 
     newlist_to_print = []
+    
     if newlist:
         for item in newlist:
             line_number = 1 + parsed_contract_into_list.index(item)
             newlist_to_print.append(str(line_number))
 
         newlist_printable = ', '.join(newlist_to_print)
+
+        # Use printer
         printer_vuln(
             newlist_printable,
             "Re-Entrancy",
@@ -23,5 +26,7 @@ def reentrancy(contract):
             "Use a re-entrancy guard or ensure external calls are made at the end of the function.",
             ["https://consensys.github.io/smart-contract-best-practices/known_attacks/#reentrancy"]
         )
-    else:
-        return
+
+        return f"Re-Entrancy vulnerability found at line(s): {newlist_printable}"
+    
+    return None  # Explicitly return None if no vulnerabilities found

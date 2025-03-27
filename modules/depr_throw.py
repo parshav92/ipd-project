@@ -10,6 +10,7 @@ def throw(contract):
     newlist = list(filter(r.match, parsed_contract_into_list))
 
     newlist_to_print = []
+    
     if newlist:
         for item in newlist:
             line_number = 1 + parsed_contract_into_list.index(item)  # line number
@@ -24,5 +25,6 @@ def throw(contract):
             "Replace 'throw' with 'revert' or 'require' to make the code compliant with modern Solidity.",
             ["https://solidity.readthedocs.io/en/v0.4.21/control-structures.html#error-handling-assert-require-revert-and-exceptions"]
         )
-    else:
-        return
+        return f"Deprecated Throw vulnerability found at line(s): {newlist_printable}"
+    
+    return None  # Explicitly return None if no vulnerabilities found

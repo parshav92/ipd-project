@@ -1,25 +1,27 @@
 import click
 import re
 from modules.utils.parse_contract_util import parse_contract
-from modules.utils.printer import *
+from modules.utils.printer import printer_vuln
 from vulnerabilities_descriptions.hashcol_desc import *
-
 
 def hash_colission(contract):
     r = re.compile(r'^.*abi\.encodePacked\(.*,.*\).*')  # Add raw string prefix 
     parsed_contract_into_list = parse_contract(contract)
     newlist = list(filter(r.match, parsed_contract_into_list))
-    #make newlist printable 
+
     newlist_to_print = []
-    #=====
+
     if newlist:
         for i in range(len(newlist)):
-            line_number = 1+parsed_contract_into_list.index(newlist[i]) #line number
-            line_number_as_str = str(line_number) #line number to string
-            newlist_to_print.append(line_number_as_str) #new list without []
-        newlist_printable = ', '.join(newlist_to_print) #new list without []
-        #Use printer
+            line_number = 1 + parsed_contract_into_list.index(newlist[i])  # Line number
+            line_number_as_str = str(line_number)  # Convert to string
+            newlist_to_print.append(line_number_as_str)  # Store in list
+        
+        newlist_printable = ', '.join(newlist_to_print)  # Format as string
+        
+        # Use printer
         printer_vuln(newlist_printable, vulnerability_name, vulnerability_description, vulnerability_recommendation, more_info)
-    else:
-        return
 
+        return f"Hash Collision vulnerability found at line(s): {newlist_printable}"
+    
+    return None  # Explicitly return None if no vulnerabilities found

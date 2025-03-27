@@ -11,14 +11,15 @@ def multiple_constructors(contract):
 
     # Exit early if the contract is empty
     if not parsed_contract_into_list:
-        return  # Gracefully exit
+        return None  # Explicitly return None
 
     # Regex to detect old-style constructors (function with the same name as the contract)
     contract_name_pattern = re.compile(r'contract\s+(\w+)\s*{', re.IGNORECASE)
     contract_name_match = contract_name_pattern.search("\n".join(parsed_contract_into_list))
 
     if not contract_name_match:
-        return  # No contract name found, gracefully exit
+        return None  # No contract name found, gracefully exit
+
 
     contract_name = contract_name_match.group(1)
     old_constructor_pattern = re.compile(rf'function\s+{contract_name}\s*\(.*\)', re.IGNORECASE)
@@ -38,5 +39,6 @@ def multiple_constructors(contract):
             vulnerability_recommendation,
             more_info
         )
-    else:
-        return  # Exit if no vulnerabilities are found
+        return "Multiple Constructors vulnerability detected in the contract."
+    
+    return None  # Explicitly return None if no vulnerabilities found

@@ -38,5 +38,6 @@ def looped_calls(contract):
             vulnerability_recommendation,
             more_info
         )
-    else:
-        return
+        return f"Looped Calls vulnerability found at line(s): {newlist_printable}"
+    
+    return None  # Explicitly return None if no vulnerabilities found
